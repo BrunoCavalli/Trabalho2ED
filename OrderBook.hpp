@@ -17,8 +17,7 @@ class OrderBook {
 
 private:
 
-    // Estruturas internas escolhidas pelos alunos
-    // para armazenar ordens de compra, venda e transações
+   // Criei listas para cada um dos tipos de operações
     OrderNode* buy;
     OrderNode* sell;
     TransactionNode* transactions;
