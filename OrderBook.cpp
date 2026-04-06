@@ -1,4 +1,6 @@
 #include "OrderBook.hpp"
+#include "Order.hpp"
+#include <iostream>
 
 OrderBook::OrderBook() {
     buy = nullptr;
@@ -30,4 +32,23 @@ OrderBook::~OrderBook() {
         delete current2;
         current2 = next;
     }
+}
+
+bool OrderBook::submit(Order order){
+    if(order.getType() == 'B'){
+        OrderNode* best = nullptr;
+        OrderNode* current = sell;
+
+        while(current != nullptr) {
+            if(current->order.getPrice() <= order.getPrice()){
+                if(current->order.getPrice() < best->order.getPrice()){
+                    best = current;
+                } else if (current->order.getPrice() == best->order.getPrice() && current->order.getTimestamp() < best->order.getTimestamp()){
+                    best = current;
+                }
+                current = current->next;
+            }
+        }
+
+    }    
 }
