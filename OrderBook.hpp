@@ -38,6 +38,7 @@ public:
     void printBuyOrders();
     void printSellOrders();
     void printTransactions();
+    void insertBuyOrder(Order order);
 
     // Outros métodos auxiliares, se necessário
 };

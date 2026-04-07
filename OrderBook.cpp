@@ -34,6 +34,14 @@ OrderBook::~OrderBook() {
     }
 }
 
+void OrderBook::insertBuyOrder(Order order){
+    OrderNode* newNode = new OrderNode(buy, order);
+    newNode->order = order;
+    newNode->next = buy;
+    buy = newNode;
+}
+
+
 bool OrderBook::submit(Order order){
     if(order.getType() == 'B'){
         OrderNode* best = nullptr;
@@ -41,13 +49,21 @@ bool OrderBook::submit(Order order){
 
         while(current != nullptr) {
             if(current->order.getPrice() <= order.getPrice()){
-                if(current->order.getPrice() < best->order.getPrice()){
+                if(best == nullptr) {
+                    best = current;
+                } else if(current->order.getPrice() < best->order.getPrice()){
                     best = current;
                 } else if (current->order.getPrice() == best->order.getPrice() && current->order.getTimestamp() < best->order.getTimestamp()){
                     best = current;
                 }
                 current = current->next;
             }
+        }
+        if (best != nullptr) {
+            Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
+
+        } else {
+            submit(order);
         }
 
     }    
