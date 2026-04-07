@@ -13,6 +13,8 @@ private:
 
 public:
 
+    Order() : id(0), type('B'), price(0.0), timestamp(0) {}
+
     Order(int id, char type, float price, int timestamp);
     ~Order();
 

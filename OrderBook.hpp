@@ -38,7 +38,8 @@ public:
     void printBuyOrders();
     void printSellOrders();
     void printTransactions();
-    void insertBuyOrder(Order order);
+    void insertBuyOrder(Order order); // inseri no incio da lista buy
+    void insertTransaction(Transaction transaction); // inseri no inicio da lista transactions
 
     // Outros métodos auxiliares, se necessário
 };

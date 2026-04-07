@@ -35,12 +35,18 @@ OrderBook::~OrderBook() {
 }
 
 void OrderBook::insertBuyOrder(Order order){
-    OrderNode* newNode = new OrderNode(buy, order);
+    OrderNode* newNode = new OrderNode;
     newNode->order = order;
     newNode->next = buy;
     buy = newNode;
 }
 
+void OrderBook::insertTransaction(Transaction transaction){
+    TransactionNode* newNode = new TransactionNode;
+    newNode->transaciton = transaction;
+    newNode->next = transactions;
+    transactions = newNode;
+}
 
 bool OrderBook::submit(Order order){
     if(order.getType() == 'B'){
@@ -59,11 +65,15 @@ bool OrderBook::submit(Order order){
                 current = current->next;
             }
         }
-        if (best != nullptr) {
+        if (best != nullptr) { // achou contraparte -> executa a transação
             Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
+            insertTransaction(t);
+            // remover da lista buy
+            return true;
 
-        } else {
-            submit(order);
+        } else { // não achou acontraparte -> inseri na lista de pedidos de comprar (buy)
+            insertBuyOrder(order);
+            return false;
         }
 
     }    
