@@ -41,6 +41,29 @@ void OrderBook::insertBuyOrder(Order order){
     buy = newNode;
 }
 
+void OrderBook::RemoveSellOrder(Order order) {
+    if (sell == nullptr) return;
+
+    if(sell->order.getId() == order.getId()) {
+        OrderNode* temp = sell;
+        sell = sell->next;
+        delete temp;
+        return;
+    }
+
+    OrderNode* current = sell;
+    while (current->next != nullptr && current->next->order.getId() != order.getId()){
+        current = current->next;
+    }
+
+    if(current->next != nullptr){
+        OrderNode* temp = current->next;
+        current->next = temp->next;
+        delete temp;
+    }
+}
+   
+
 void OrderBook::insertTransaction(Transaction transaction){
     TransactionNode* newNode = new TransactionNode;
     newNode->transaciton = transaction;
@@ -68,7 +91,7 @@ bool OrderBook::submit(Order order){
         if (best != nullptr) { // achou contraparte -> executa a transação
             Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
             insertTransaction(t);
-            // remover da lista buy
+            RemoveSellOrder(order);
             return true;
 
         } else { // não achou acontraparte -> inseri na lista de pedidos de comprar (buy)
