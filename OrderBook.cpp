@@ -41,6 +41,13 @@ void OrderBook::insertBuyOrder(Order order){
     buy = newNode;
 }
 
+void OrderBook::insertSellOrder(Order order){
+    OrderNode* newNode = new OrderNode;
+    newNode->order = order;
+    newNode->next = sell;
+    sell = newNode;
+}
+
 void OrderBook::RemoveSellOrder(Order order) {
     if (sell == nullptr) return;
 
@@ -62,7 +69,29 @@ void OrderBook::RemoveSellOrder(Order order) {
         delete temp;
     }
 }
-   
+
+void OrderBook::RemoveBuyOrder(Order order){
+    if(buy == nullptr) return;
+
+    if(buy->order.getId() == order.getId()){
+        OrderNode* temp = buy;
+        buy = buy->next;
+        delete temp;
+        return;
+    }
+
+    OrderNode* current = buy;
+    while (current->next != nullptr && current->next->order.getId() != order.getId()){
+        current = current->next;
+    }
+
+    if(current->next != nullptr){
+        OrderNode* temp = current->next;
+        current->next = temp->next;
+        delete temp;
+    }    
+
+}
 
 void OrderBook::insertTransaction(Transaction transaction){
     TransactionNode* newNode = new TransactionNode;
@@ -91,7 +120,7 @@ bool OrderBook::submit(Order order){
         if (best != nullptr) { // achou contraparte -> executa a transação
             Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
             insertTransaction(t);
-            RemoveSellOrder(order);
+            RemoveSellOrder(best->order);
             return true;
 
         } else { // não achou acontraparte -> inseri na lista de pedidos de comprar (buy)
@@ -99,5 +128,34 @@ bool OrderBook::submit(Order order){
             return false;
         }
 
-    }    
+    }
+    
+    if(order.getType() == 'S'){
+        OrderNode* best = nullptr;
+        OrderNode* current = buy;
+
+        while(current != nullptr) {
+            if(current->order.getPrice() >= order.getPrice()){
+                if(best == nullptr) {
+                    best = current;
+                } else if(current->order.getPrice() > best->order.getPrice()){
+                    best = current;
+                } else if (current->order.getPrice() == best->order.getPrice() && current->order.getTimestamp() < best->order.getTimestamp()){
+                    best = current;
+                }
+            }
+            current = current->next;
+        }
+        if (best != nullptr) { // achou contraparte -> executa a transação
+            Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
+            insertTransaction(t);
+            RemoveBuyOrder(order);
+            return true;
+
+        } else { // não achou acontraparte -> inseri na lista de pedidos de venda (sell)
+            insertSellOrder(order);
+            return false;
+        }
+
+    }
 }
