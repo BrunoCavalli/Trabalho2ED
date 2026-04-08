@@ -118,7 +118,7 @@ bool OrderBook::submit(Order order){
             }
         }
         if (best != nullptr) { // achou contraparte -> executa a transação
-            Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
+            Transaction t(order.getId(),best->order.getId(), best->order.getPrice()); // order é a compra e best->order é venda
             insertTransaction(t);
             RemoveSellOrder(best->order);
             return true;
@@ -147,9 +147,9 @@ bool OrderBook::submit(Order order){
             current = current->next;
         }
         if (best != nullptr) { // achou contraparte -> executa a transação
-            Transaction t(order.getId(),best->order.getId(), best->order.getPrice());
+            Transaction t(best->order.getId(),order.getId(), best->order.getPrice()); // best->order é compra e order é a venda 
             insertTransaction(t);
-            RemoveBuyOrder(order);
+            RemoveBuyOrder(best->order);
             return true;
 
         } else { // não achou acontraparte -> inseri na lista de pedidos de venda (sell)
