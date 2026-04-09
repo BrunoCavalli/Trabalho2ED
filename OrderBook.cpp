@@ -161,6 +161,31 @@ bool OrderBook::submit(Order order){
     return false;
 }
 
+bool OrderBook::cancel(int id){
+    OrderNode* current = buy;
+    while(current->next != nullptr && current->order.getId() != id){
+        current = current->next;
+    }
+
+    if(current != nullptr){
+        RemoveBuyOrder(current->order);
+        return true;    
+    }
+
+    OrderNode* currentSell = sell;
+    while(currentSell->next != nullptr && currentSell->order.getId() != id){
+        currentSell = currentSell->next
+    }
+
+    if(currentSell != nullptr){
+       RemoveSellOrder(currentSell->order);
+       return true;
+    }
+
+    return false;
+
+}
+
 // Retorna um array com as orders de compra que temos. Como não sabemos o tamanho das orders, teremos que varrer ela antes
 Order* OrderBook::getBuyOrders(int* n){
     int count = 0;
