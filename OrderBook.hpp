@@ -8,7 +8,7 @@ struct OrderNode {
 };
 
 struct TransactionNode {
-    Transaction transaciton;
+    Transaction transaction;
     TransactionNode* next;
 };
 

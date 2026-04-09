@@ -12,3 +12,19 @@ Order::Order(int id, char type, float price, int timestamp){
 Order::~Order(){
 
 }   
+
+int Order::getId() {
+    return id;
+}
+
+char Order::getType() {
+    return type;
+}
+
+float Order::getPrice() {
+    return price;
+}
+
+int Order::getTimestamp() {
+    return timestamp;
+}

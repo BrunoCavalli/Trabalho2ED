@@ -95,7 +95,7 @@ void OrderBook::RemoveBuyOrder(Order order){
 
 void OrderBook::insertTransaction(Transaction transaction){
     TransactionNode* newNode = new TransactionNode;
-    newNode->transaciton = transaction;
+    newNode->transaction = transaction;
     newNode->next = transactions;
     transactions = newNode;
 }
@@ -114,8 +114,8 @@ bool OrderBook::submit(Order order){
                 } else if (current->order.getPrice() == best->order.getPrice() && current->order.getTimestamp() < best->order.getTimestamp()){
                     best = current;
                 }
-                current = current->next;
             }
+            current = current->next;
         }
         if (best != nullptr) { // achou contraparte -> executa a transação
             Transaction t(order.getId(),best->order.getId(), best->order.getPrice()); // order é a compra e best->order é venda
@@ -157,5 +157,133 @@ bool OrderBook::submit(Order order){
             return false;
         }
 
+    }
+    return false;
+}
+
+// Retorna um array com as orders de compra que temos. Como não sabemos o tamanho das orders, teremos que varrer ela antes
+Order* OrderBook::getBuyOrders(int* n){
+    int count = 0;
+    OrderNode* current = buy;
+
+    while(current != nullptr){
+        count++;
+        current = current->next;
+    }
+
+    *n = count;
+    
+    if(count==0){
+        return nullptr;
+    }
+
+    Order* orders = new Order[count];
+
+    current = buy;
+    int i = 0;
+    while(current!=nullptr){
+        orders[i] = current->order;
+        i++;
+        current = current->next;
+    }
+
+    return orders;
+}
+
+// Repete a mesma lógica para as ordens de venda
+Order* OrderBook::getSellOrders(int* n){
+    int count = 0;
+    OrderNode* current = sell;
+
+    while(current != nullptr){
+        count++;
+        current = current->next;
+    }
+
+    *n = count;
+    
+    if(count==0){
+        return nullptr;
+    }
+
+    Order* orders = new Order[count];
+
+    current = sell;
+    int i = 0;
+    while(current!=nullptr){
+        orders[i] = current->order;
+        i++;
+        current = current->next;
+    }
+
+    return orders;
+}
+
+// Repete a mesma lógica para transactions, mas mudando o objeto pra transactions
+Transaction* OrderBook::getTransactions(int* n){
+    int count = 0;
+    TransactionNode* current = transactions;
+
+    while(current != nullptr){
+        count++;
+        current = current->next;
+    }
+
+    *n = count;
+    
+    if(count==0){
+        return nullptr;
+    }
+
+    Transaction* result = new Transaction[count];
+
+    current = transactions;
+    int i = 0;
+    while(current!=nullptr){
+        result[i] = current->transaction;
+        i++;
+        current = current->next;
+    }
+
+    return result;
+}
+
+// Por fim, montando funções que varrem as orders e printam
+void OrderBook::printBuyOrders(){
+    std::cout<<"Buy orders:"<< std::endl;
+    if(buy==nullptr){
+        std::cout<<"(empty)"<<std::endl;
+        return;
+    }
+    OrderNode* current = buy;
+    while(current!=nullptr){
+        std::cout<<"["<<current->order.getId()<<" | "<<current->order.getPrice()<<" | "<<current->order.getTimestamp()<<"]"<<std::endl;
+        current = current->next;
+    }
+}
+
+void OrderBook::printSellOrders(){
+    std::cout<<"Sell orders:"<< std::endl;
+    if(sell==nullptr){
+        std::cout<<"(empty)"<<std::endl;
+        return;
+    }
+    OrderNode* current = sell;
+    while(current!=nullptr){
+        std::cout<<"["<<current->order.getId()<<" | "<<current->order.getPrice()<<" | "<<current->order.getTimestamp()<<"]"<<std::endl;
+        current = current->next;
+    }
+}
+
+void OrderBook::printTransactions(){
+    std::cout<<"Transactions:"<<std::endl;
+    if(transactions==nullptr){
+        std::cout<<"(empty)"<<std::endl;
+        return;
+    }
+    TransactionNode* current = transactions;
+    while(current!=nullptr){
+        std::cout<<"["<<current->transaction.getBuyOrderId()<<", "<<current->transaction.getSellOrderId()<<", "<<current->transaction.getExecutionPrice()<<"]"<<std::endl;
+        current = current->next;
     }
 }

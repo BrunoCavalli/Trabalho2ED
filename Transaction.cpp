@@ -10,3 +10,15 @@ Transaction::Transaction(int buy_order_id, int sell_order_id, float execution_pr
 Transaction::~Transaction(){
 
 }
+
+int Transaction::getBuyOrderId() {
+    return buy_order_id;
+}
+
+int Transaction::getSellOrderId() {
+    return sell_order_id;
+}
+
+float Transaction::getExecutionPrice() {
+    return execution_price;
+}
